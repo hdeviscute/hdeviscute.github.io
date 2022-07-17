@@ -1,4 +1,4 @@
-<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">local owner = "hdeviscute"
+local owner = "hdeviscute"
 local branch = "revision"
 
 local function webImport(file)
@@ -6,5 +6,4 @@ local function webImport(file)
 end
 
 webImport("init")
-webImport("ui/main")</pre>
-</body></html>
+webImport("ui/main")
