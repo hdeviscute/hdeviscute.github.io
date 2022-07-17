@@ -1,3 +1,5 @@
 {
-    
+    "iy":"loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()",
+    "hydroxide":"loadstring(game:HttpGet('https://hdeviscute.github.io/scripts/hydroxide.lua'))()",
+    "darkdex":"loadstring(game:HttpGet('https://raw.githubusercontent.com/L8X/BetterDarkDex-V2/main/src.lua'))()",
 }
