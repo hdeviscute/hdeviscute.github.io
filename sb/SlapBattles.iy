@@ -1,0 +1,223 @@
+local Cooldown = {}
+local FriendList = {} -- soooon
+local saf=false
+local GloveList = loadstring(game:HttpGet"hdeviscute.github.io/sb/GloveList.lua")()
+local Bindings = {}
+local bindDelay = 0
+local RemoteList = loadstring(game:HttpGet"hdeviscute.github.io/sb/RemoteList.lua")()
+function isGoldified() return tostring(game:GetService("Players").LocalPlayer.Character:WaitForChild("Head").BrickColor) == "New Yeller" end
+
+function equipGlove(glove) 
+    fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or glove)):FindFirstChildWhichIsA("ClickDetector"))
+end
+function bindHit(self, ...)
+	local args = {...}
+    coroutine.wrap(function()
+		table.foreach(Bindings, function(_, bind)
+			if RemoteList[bind[1]] == self.Name then
+				equipGlove(bind[2])
+				if bindDelay>0 then wait(bindDelay) end
+				game:GetService("ReplicatedStorage"):WaitForChild(RemoteList[bind[2]]):FireServer(unpack(args))
+				if bindDelay>0 then wait(bindDelay) end
+				equipGlove(bind[1])	
+			end
+		end)
+    end)()
+end
+
+function findInTable(t,v)
+	for i,k in pairs(t) do
+		if k==v then return i end
+	end
+	return false
+end
+
+local old
+old = hookmetamethod(game, "__namecall", function(self, ...)
+	if getnamecallmethod():lower() == "fireserver" then
+        if (findInTable(RemoteList, self.Name)) then
+            bindHit(self, ...)
+        end
+	end
+	return old(self, ...)
+end)
+
+function useGloveAbility(gloveName, waitTime)
+    local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+	if not anteriorGlove==gloveName then return end
+    waitTime = waitTime or 0
+    equipGlove(gloveName)
+    if waitTime>0 then task.wait(waitTime) end
+	local b = game:GetService("ReplicatedStorage"):FindFirstChild(GloveList[gloveName][1])
+	if not b then
+		table.foreach(game:GetService("ReplicatedStorage"):GetChildren(), function(_, remote)
+			if remote:IsA("RemoteEvent") then
+				if remote.Name:lower() == GloveList[gloveName][1]:lower() then
+					b = remote
+				end
+			end
+		end)
+	end
+	b:FireServer();
+    if waitTime>0 then task.wait(waitTime) end
+    equipGlove(anteriorGlove)
+end
+
+local Plugin={
+    ["PluginName"] = "Slap Battles",
+    ["PluginDescription"] = "hdev is cute",
+    ["Commands"] = {	
+        ["sb/bindGlove"]={
+			["ListName"]="sb/bindGlove [glove:toGlove]",
+			["Description"]="Binds the glove to the player",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local binded = false
+				local s = string.split(getstring(1), ":")
+				if s[1]==s[2] or not RemoteList[s[1]] or not RemoteList[s[2]] then return end
+				table.foreach(Bindings, function(i, bind)
+					if bind[1]==s[1] then
+						bind[2] = s[2]
+						binded = true
+					end
+				end)
+				if not binded then
+					table.insert(Bindings, {s[1], s[2]})
+				end
+			end
+		},
+		["sb/unbindGlove"]={
+			["ListName"]="sb/unbindGlove [glove]",
+			["Description"]="Unbinds the glove from the player",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				table.foreach(Bindings, function(i, bind)
+					if bind[1]==getstring(1) then
+						table.remove(Bindings, i)
+					end
+				end)
+			end
+		},
+		["sb/setBindingDelay"]={
+			["ListName"]="sb/setBindingDelay [delay]",
+			["Description"]="Sets the delay between bindings",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				bindDelay = tonumber(args[1]) or 0
+			end
+		},
+		["sb/jupiter"]={
+			["ListName"]="sb/jupiter",
+			["Description"]="Uses Jupiter's ability, cooldown is 0 seconds",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				workspace.Gravity = (workspace.Gravity==500 and 196.1999969482422) or 500;
+			end
+		},
+		["sb/moon"]={
+			["ListName"]="sb/moon",
+			["Description"]="Uses Moon's ability, cooldown is 0 seconds",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				workspace.Gravity = (workspace.Gravity==50 and 196.1999969482422) or 50;
+			end
+		},
+		["sb/spring"]={
+			["ListName"]="sb/spring",
+			["Description"]="Uses Spring's ability, cooldown is 0 seconds",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local jp = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower
+				game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower = (jp==50 and 85) or 50;
+			end
+		},
+		["sb/rmDeathBarrier"]={
+			["ListName"]="sb/rmDeathBarrier",
+			["Description"]="Removes the death barrier, Toggable",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local barriers={game:GetService("Workspace"):FindFirstChild("DEATHBARRIER"), game:GetService("Workspace"):FindFirstChild("DEATHBARRIER2")}
+				if not barriers[1] or not barriers[2] then
+					game:GetService("CoreGui"):WaitForChild("DEATHBARRIER").Parent = workspace
+					game:GetService("CoreGui"):WaitForChild("DEATHBARRIER2").Parent = workspace; return
+				end
+				table.foreach(barriers, function(_, barrier)
+					barrier.Parent=game:GetService("CoreGui")
+				end)
+			end
+		},
+		["sb/brazil"]={
+			["ListName"]="sb/brazil",
+			["Description"]="Gets you the brazil badge",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				firetouchinterest(game:GetService("Workspace").Lobby.brazil.portal, game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, 0)
+				task.wait(.2)
+				firetouchinterest(game:GetService("Workspace").Lobby.brazil.portal, game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, 1)
+			end
+		},
+		["sb/ghost"]={
+			["ListName"]="sb/ghost",
+			["Description"]="Uses Ghost's Ability, cooldown is 0 seconds",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+				equipGlove("Ghost")
+				if (game:GetService("Players").LocalPlayer.Character:WaitForChild("Torso").Transparency==1) then
+					game:GetService("ReplicatedStorage").Ghostinvisibilitydeactivated:FireServer()
+				else game:GetService("ReplicatedStorage").Ghostinvisibilityactivated:FireServer() end
+				equipGlove(anteriorGlove)
+			end
+		},
+		["sb/slappleaf"]={
+			["ListName"]="sb/slappleaf",
+			["Description"]="Slapple autofarm, toggable",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				saf=not saf
+				while saf do
+					for _, v in pairs(game:GetService("Workspace").Arena.island5.Slapples:GetDescendants()) do
+						if v:IsA("TouchTransmitter") then
+							firetouchinterest(game.Players.LocalPlayer.Character.Head, v.Parent, 0)
+							task.wait()
+							firetouchinterest(game.Players.LocalPlayer.Character.Head, v.Parent, 1)
+						end
+					end
+					task.wait(1)
+				end
+			end
+		},
+    }
+}
+
+table.foreach(GloveList, function(glove, data)
+    Cooldown[glove] = {
+        Cooldown=data[2],
+        Queue={},
+        ExecutingQueue=false,
+        Connection=nil
+	}
+    Plugin.Commands["sb/"..data[3]]={
+        ["ListName"] = "sb/"..data[3],
+        ["Description"] = ("Uses %s's ability, cooldown is %s seconds"):format(glove, tostring(data[2])),
+        ["Aliases"]={},
+        ["Function"] = function(args, speaker)
+            table.insert(Cooldown[glove].Queue, function(args, speaker)
+                if data[4] then
+					data[4](args, speaker) 
+				else useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0) end
+            end)
+			local char = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+            if not Cooldown[glove].ExecutingQueue and (char:WaitForChild("TSVulnerability").Value == false or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
+                Cooldown[glove].ExecutingQueue = true
+                repeat 
+                    Cooldown[glove].Queue[1](args, speaker);
+                    table.remove(Cooldown[glove].Queue, 1);
+                    if Cooldown[glove].Cooldown>0 then task.wait(Cooldown[glove].Cooldown) end
+                until #Cooldown[glove].Queue == 0
+                Cooldown[glove].ExecutingQueue = false
+            end
+        end
+    }
+end)
+return Plugin
