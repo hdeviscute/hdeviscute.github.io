@@ -1,0 +1,326 @@
+function char() return game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait() end
+local Cooldown = {}
+local saf=false -- Slapple Autofarm (true/false)
+local GloveList = {
+    Default={"Fart", 0, "fart"},
+    Diamond={"Rockmode", 0, "rock"},
+    ZZZZZZZ={"ZZZZZZZSleep", 0, "sleep"},
+    Extended={"Fart", 0, "fart"},
+    Brick={"lbrick", 3.5, "brick"},
+    Flash={"Flashteleport", 3.5, "flash"},
+    Swapper={"SLOC", 7.5, "swap"},
+    Phase={"PhaseA", 5.2, "phase"},
+    ["Za Hando"]={"Erase", 7.5, "pull"},
+    Fort={"Fortlol", 5, "fort"},
+    Pusher={"PusherWall", 10, "push"},
+    Anchor={"AnchorActivated", 5, "anchor"},
+    Mail={"Mailsend", 10, "mail"},
+    Golden={"Goldify", 0, "goldify", function(args, speaker)
+        local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+        equipGlove("Golden")
+        game:GetService("ReplicatedStorage"):FindFirstChild("Goldify"):FireServer(true);
+        equipGlove(anteriorGlove)
+    end},
+    Cheeky={"Spherify", 0, "cheeky"},
+    Replica={"Duplicate", 10, "clone"},
+    bob={"bob", 5.5, "bob"},
+    Defense={"Barrier", 30, "barrier"},
+    Reverse={"ReverseAbility", 5, "reverse"},
+    Jet={"AirStrike", 5, "airstrike", function(args, speaker)
+        local plr = getPlayer(getstring(1), speaker)
+        table.foreach(plr, function(i, player)
+            player=game:GetService("Players"):WaitForChild(player)
+            if isPlayerInArena(player) then
+                local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+                equipGlove("Jet")
+                game:GetService("ReplicatedStorage"):FindFirstChild("AirStrike"):FireServer(player.Character);
+                equipGlove(anteriorGlove) 
+            end
+            if plr[i+1] then task.wait(5) end
+        end)
+    end},
+    Duelist={"DuelistAbility", 25, "duelist"},
+    woah={"VineThud", 5, "shockwave"},
+    Bubble={"BubbleThrow", 3, "bubble"},
+    bus={"busmoment", 5, "bus"},
+    ["[REDACTED]"]={"Well", 10, "redacted"}
+}
+
+
+local Bindings = {}
+local RemoteList = {
+    Default="b",
+    Diamond="DiamondHit",
+    ZZZZZZZ="ZZZZZZZHit",
+    Extended="b",
+    Brick="BrickHit",
+    Snow="SnowHit",
+    Pull="PullHit",
+    Flash="FlashHit",
+    Spring="springhit",
+    Swapper="HitSwapper",
+    Bull="BullHit",
+    Dice="DiceHit",
+    Ghost="GhostHit",
+    Thanos="ThanosHit",
+    Stun="HtStun",
+    ["Za Hando"]="zhramt",
+    Fort="Fort",
+    Magnet="MagnetHIT",
+    Pusher="PusherHit",
+    Anchor="hitAnchor",
+    Space="HtSpace",
+    Boomerang="BoomerangH",
+    Dream="Dreamhit",
+    Golden="GoldenHit",
+    Cheeky="CheekyHit",
+    Mail="MailHit",
+    Reaper="ReaperHit",
+    Replica="ReplicaHit",
+    Defense="DefenseHit",
+    Killstreak="KSHit",
+    Reverse="ReverseHit",
+    Shukuchi="ShukuchiHit",
+    Duelist="DuelistHit",
+    woah="woahHit",
+    Ice="IceHit",
+    Adios="hitAdios",
+    Blocked="BlockedHit",
+    Engineer="engiehit",
+    Rocky="RockyHit",
+    Conveyor="ConvHit",
+    Phantom="PhantomHit",
+    Wormhole="WormHit",
+    STOP="STOP",
+    ["God's Hand"]="Godshand",
+    Plague="PlagueHit",
+    ["[REDACTED]"]="ReHit",
+    bus="hitbus",
+    Phase="PhaseH",
+    Warp="WarpHt",
+    Bomb="BombHit",
+    Bubble="BubbleHit",
+    Jet="JetHit",
+    potato="potatohit",
+    CULT="CULTHit",
+    buddies="buddiesHIT",
+    Moon="CelestialHit",
+    Jupiter="CelestialHit",
+    Spy="SpyHit",
+    Rage="GRRRR",
+    Orbit="Orbihit",
+    Error="Errorhit",
+    bob="bobhit",
+    Trap="traphi",
+    spin="spinhit",
+    ["The Flex"]="FlexHit",
+    Flex="FlexHit",
+    Overkill="Overkillhit"
+}
+
+function isGoldified() return tostring(char():WaitForChild("Head").BrickColor) == "New Yeller" end
+function isInArena() return (char().isInArena.Value==true or char().IsInDefaultArena.Value==true or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value==true) end
+function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
+
+function equipGlove(glove) 
+    fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="God's Hand" and "Gods") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or (glove=="The Flex" and "Flex") or glove)):FindFirstChildWhichIsA("ClickDetector"))
+end
+
+function bindHit(self, ...)
+	local args = {...}
+    coroutine.wrap(function()
+		table.foreach(Bindings, function(_, bind)
+			if RemoteList[bind[1]] == self.Name then
+				equipGlove(bind[2])
+				game:GetService("ReplicatedStorage"):WaitForChild(RemoteList[bind[2]]):FireServer(unpack(args))
+				equipGlove(bind[1])	
+			end
+		end)
+    end)()
+end
+
+function findInTable(t,v)
+	for i,k in pairs(t) do
+		if k==v then return i end
+	end
+	return false
+end
+
+local old
+old = hookmetamethod(game, "__namecall", function(self, ...)
+	if getnamecallmethod():lower() == "fireserver" then
+        if (findInTable(RemoteList, self.Name)) then
+            bindHit(self, ...)
+        end
+	end
+	return old(self, ...)
+end)
+
+
+function useGloveAbility(gloveName, waitTime)
+    local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+    waitTime = waitTime or 0
+    equipGlove(gloveName)
+    if waitTime>0 then task.wait(waitTime) end
+	local b = game:GetService("ReplicatedStorage"):FindFirstChild(GloveList[gloveName][1])
+	if not b then
+		table.foreach(game:GetService("ReplicatedStorage"):GetChildren(), function(_, remote)
+			if remote:IsA("RemoteEvent") and remote.Name:lower() == GloveList[gloveName][1]:lower() then
+				b = remote
+			end
+		end)
+	end
+	b:FireServer();
+    if waitTime>0 then task.wait(waitTime) end
+    equipGlove(anteriorGlove)
+end
+
+local Plugin={
+    ["PluginName"] = "Slap Battles",
+    ["PluginDescription"] = "hdev is cute",
+    ["Commands"] = {	
+        ["sb/bindGlove"]={
+			["ListName"]="sb/bindGlove [glove:toGlove]",
+			["Description"]="Binds the glove to the player",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local binded = false
+				local s = string.split(getstring(1), ":")
+				if s[1]==s[2] or not RemoteList[s[1]] or not RemoteList[s[2]] then return end
+				table.foreach(Bindings, function(i, bind)
+					if bind[1]==s[1] then
+						bind[2] = s[2]
+						binded = true
+					end
+				end)
+				if not binded then
+					table.insert(Bindings, {s[1], s[2]})
+				end
+			end
+		},
+		["sb/unbindGlove"]={
+			["ListName"]="sb/unbindGlove [glove]",
+			["Description"]="Unbinds the glove from the player",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				table.foreach(Bindings, function(i, bind)
+					if bind[1]==getstring(1) or bind[2]==getstring(1) then
+						table.remove(Bindings, i)
+					end
+				end)
+			end
+		},
+		["sb/jupiter"]={
+			["ListName"]="sb/jupiter",
+			["Description"]="Uses Jupiter's ability, cooldown is 0 seconds",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				workspace.Gravity = (workspace.Gravity==500 and 196) or 500;
+			end
+		},
+		["sb/moon"]={
+			["ListName"]="sb/moon",
+			["Description"]="Uses Moon's ability, cooldown is 0 seconds",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				workspace.Gravity = (workspace.Gravity==50 and 196) or 50;
+			end
+		},
+		["sb/spring"]={
+			["ListName"]="sb/spring",
+			["Description"]="Uses Spring's ability, cooldown is 0 seconds",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local jp = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower
+				game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower = (jp==50 and 85) or 50;
+			end
+		},
+		["sb/rmDeathBarrier"]={
+			["ListName"]="sb/rmDeathBarrier",
+			["Description"]="Removes the death barrier, Toggable",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local barriers={game:GetService("Workspace"):FindFirstChild("DEATHBARRIER"), game:GetService("Workspace"):FindFirstChild("DEATHBARRIER2")}
+				if not barriers[1] then
+					game:GetService("CoreGui"):WaitForChild("DEATHBARRIER").Parent = workspace
+					game:GetService("CoreGui"):WaitForChild("DEATHBARRIER2").Parent = workspace; return
+				end
+				table.foreach(barriers, function(_, barrier)
+					barrier.Parent=game:GetService("CoreGui")
+				end)
+			end
+		},
+		["sb/brazil"]={
+			["ListName"]="sb/brazil",
+			["Description"]="Gets you the brazil badge",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local a={game:GetService("Workspace").Lobby.brazil.portal, char().HumanoidRootPart}
+				firetouchinterest(unpack(a), 0)
+				task.wait(.2)
+				firetouchinterest(unpack(a), 1)
+			end
+		},
+		["sb/ghost"]={
+			["ListName"]="sb/ghost",
+			["Description"]="Uses Ghost's Ability, cooldown is 0 seconds",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+				equipGlove("Ghost")
+				if (char():WaitForChild("Torso").Transparency==1) then
+					game:GetService("ReplicatedStorage").Ghostinvisibilitydeactivated:FireServer()
+				else game:GetService("ReplicatedStorage").Ghostinvisibilityactivated:FireServer() end
+				equipGlove(anteriorGlove)
+			end
+		},
+		["sb/slappleaf"]={
+			["ListName"]="sb/slappleaf",
+			["Description"]="Slapple autofarm, toggable",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				saf=not saf
+				while saf do
+					for _, v in pairs(game:GetService("Workspace").Arena.island5.Slapples:GetDescendants()) do
+						if v:IsA("TouchTransmitter") then
+							local a={char().Head, v.Parent}
+							firetouchinterest(unpack(a), 0)
+							task.wait()
+							firetouchinterest(unpack(a), v.Parent, 1)
+						end
+					end
+					task.wait(1)
+				end
+			end
+		},
+    }
+}
+
+table.foreach(GloveList, function(glove, data)
+    Cooldown[glove] = {
+        Cooldown=data[2],
+        Queue={},
+        ExecutingQueue=false,
+        Connection=nil
+	}
+    Plugin.Commands["sb/"..data[3]]={
+        ["ListName"] = (glove=="Jet" and "sb/"..data[3].." [plr]") or "sb/"..data[3],
+        ["Description"] = ("Uses %s's ability, cooldown is %s seconds"):format(glove, tostring(data[2])),
+        ["Aliases"]={},
+        ["Function"] = function(args, speaker)
+			table.insert(Cooldown[glove].Queue, function(args, speaker)
+				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0))
+			end)
+			if not Cooldown[glove].ExecutingQueue and (not isInArena() or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
+				Cooldown[glove].ExecutingQueue = true
+				repeat 
+					Cooldown[glove].Queue[1](args, speaker);
+					table.remove(Cooldown[glove].Queue, 1);
+					if Cooldown[glove].Cooldown>0 then task.wait(Cooldown[glove].Cooldown) end
+				until #Cooldown[glove].Queue == 0
+				Cooldown[glove].ExecutingQueue = false
+			end
+        end
+    }
+end)
+return Plugin
