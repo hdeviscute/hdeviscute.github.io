@@ -4,10 +4,9 @@ local FriendList = {} -- soooon
 local saf=false
 local GloveList = loadstring(game:HttpGet"hdeviscute.github.io/sb/GloveList.lua")()
 local Bindings = {}
-local bindDelay = 0
 local RemoteList = loadstring(game:HttpGet"hdeviscute.github.io/sb/RemoteList.lua")()
 function isGoldified() return tostring(char():WaitForChild("Head").BrickColor) == "New Yeller" end
-function isInArena() return (char().isInArena.Value or char().isInDefaultArena.Value or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value) end
+function isInArena() return (char().isInArena.Value or char().IsInDefaultArena.Value or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value) end
 function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
@@ -19,9 +18,7 @@ function bindHit(self, ...)
 		table.foreach(Bindings, function(_, bind)
 			if RemoteList[bind[1]] == self.Name then
 				equipGlove(bind[2])
-				if bindDelay>0 then wait(bindDelay) end
 				game:GetService("ReplicatedStorage"):WaitForChild(RemoteList[bind[2]]):FireServer(unpack(args))
-				if bindDelay>0 then wait(bindDelay) end
 				equipGlove(bind[1])	
 			end
 		end)
@@ -200,8 +197,6 @@ table.foreach(GloveList, function(glove, data)
             table.insert(Cooldown[glove].Queue, function(args, speaker)
 				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0))
             end)
-			print(char().isInArena.Value, char().isInDefaultArena.Value, game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value)
-			print(not char().isInArena.Value, not char().isInDefaultArena.Value, not game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value)
             if not Cooldown[glove].ExecutingQueue and (not isInArena() or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
                 Cooldown[glove].ExecutingQueue = true
                 repeat 
