@@ -24,5 +24,19 @@ return {
     Replica={"Duplicate", 10, "clone"},
     bob={"bob", 5, "bob"},
     Defense={"Barrier", 30, "barrier"},
-    Reverse={"ReverseAbility", 5, "reverse"}
+    Reverse={"ReverseAbility", 5, "reverse"},
+    Jet={"AirStrike", 5, "airstrike", function(args, speaker)
+        local plr = getPlayer(getstring(1), speaker)
+        table.foreach(plr, function(i, player)
+            player=game:GetService("Players"):WaitForChild(player)
+            if isPlayerInArena(player) then
+                local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+                equipGlove("Jet")
+                game:GetService("ReplicatedStorage"):FindFirstChild("AirStrike"):FireServer(player.Character);
+                equipGlove(anteriorGlove) 
+            end
+            if plr[i+1] then task.wait(5) end
+        end)
+    end},
+    Duelist={"DuelistAbility", 25, "duelist"}
 }
