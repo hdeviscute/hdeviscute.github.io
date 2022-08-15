@@ -6,7 +6,7 @@ local GloveList = loadstring(game:HttpGet"hdeviscute.github.io/sb/GloveList.lua"
 local Bindings = {}
 local RemoteList = loadstring(game:HttpGet"hdeviscute.github.io/sb/RemoteList.lua")()
 function isGoldified() return tostring(char():WaitForChild("Head").BrickColor) == "New Yeller" end
-function isInArena() return (char().isInArena.Value or char().IsInDefaultArena.Value or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value) end
+function isInArena() return (char().isInArena.Value==true or char().IsInDefaultArena.Value==true or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value==true) end
 function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
