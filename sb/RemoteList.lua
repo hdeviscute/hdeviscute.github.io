@@ -64,5 +64,6 @@ return {
     Trap="traphi",
     spin="spinhit",
     ["The Flex"]="FlexHit",
-    Flex="FlexHit"
+    Flex="FlexHit",
+    Overkill="Overkillhit"
 }
