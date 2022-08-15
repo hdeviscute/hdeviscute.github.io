@@ -62,5 +62,7 @@ return {
     Error="Errorhit",
     bob="bobhit",
     Trap="traphi",
-    spin="spinhit"
+    spin="spinhit",
+    ["The Flex"]="FlexHit",
+    Flex="FlexHit"
 }
