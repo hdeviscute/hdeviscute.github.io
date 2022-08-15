@@ -166,10 +166,9 @@ local Plugin={
 			["Function"]=function(args, speaker)
 				saf=not saf
 				while saf do
-					repeat task.wait() until isInArena() == true
 					for _, v in pairs(game:GetService("Workspace").Arena.island5.Slapples:GetDescendants()) do
 						if v:IsA("TouchTransmitter") then
-							local a={game.Players.LocalPlayer.Character.Head, v.Parent}
+							local a={char().Head, v.Parent}
 							firetouchinterest(unpack(a), 0)
 							task.wait()
 							firetouchinterest(unpack(a), v.Parent, 1)
