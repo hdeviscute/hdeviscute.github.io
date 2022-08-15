@@ -1,6 +1,7 @@
 local Cooldown = {}
 local FriendList = {} -- soooon
 local saf=false
+local safc={}
 local GloveList = loadstring(game:HttpGet"hdeviscute.github.io/sb/GloveList.lua")()
 local Bindings = {}
 local bindDelay = 0
@@ -175,16 +176,16 @@ local Plugin={
 			["Aliases"]={},
 			["Function"]=function(args, speaker)
 				saf=not saf
-				while saf do
-					for _, v in pairs(game:GetService("Workspace").Arena.island5.Slapples:GetDescendants()) do
+				if saf then
+					safc=workspace.Arena.island5.Slapples.DescendantAdded:Connect(function(_,v)
 						if v:IsA("TouchTransmitter") then
-							firetouchinterest(game.Players.LocalPlayer.Character.Head, v.Parent, 0)
+							local char=game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+							firetouchinterest(char.Head, v.Parent, 0)
 							task.wait()
-							firetouchinterest(game.Players.LocalPlayer.Character.Head, v.Parent, 1)
+							firetouchinterest(char.Head, v.Parent, 1)
 						end
-					end
-					task.wait(1)
-				end
+					end)
+				else safc:Disconnect() end
 			end
 		},
     }
