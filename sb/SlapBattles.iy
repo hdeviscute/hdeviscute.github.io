@@ -193,13 +193,15 @@ table.foreach(GloveList, function(glove, data)
         Connection=nil
 	}
     Plugin.Commands["sb/"..data[3]]={
-        ["ListName"] = (glove=="jet" and "sb/"..data[3].." [plr]") or "sb/"..data[3],
+        ["ListName"] = (glove=="Jet" and "sb/"..data[3].." [plr]") or "sb/"..data[3],
         ["Description"] = ("Uses %s's ability, cooldown is %s seconds"):format(glove, tostring(data[2])),
         ["Aliases"]={},
         ["Function"] = function(args, speaker)
             table.insert(Cooldown[glove].Queue, function(args, speaker)
 				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0))
             end)
+			print(char().isInArena.Value, char().isInDefaultArena.Value, game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value)
+			print(not char().isInArena.Value, not char().isInDefaultArena.Value, not game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value)
             if not Cooldown[glove].ExecutingQueue and (not isInArena() or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
                 Cooldown[glove].ExecutingQueue = true
                 repeat 
