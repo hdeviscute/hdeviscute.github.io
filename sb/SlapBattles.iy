@@ -1,12 +1,14 @@
+function char() return game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait() end
 local Cooldown = {}
 local FriendList = {} -- soooon
 local saf=false
-local safc={}
 local GloveList = loadstring(game:HttpGet"hdeviscute.github.io/sb/GloveList.lua")()
 local Bindings = {}
 local bindDelay = 0
 local RemoteList = loadstring(game:HttpGet"hdeviscute.github.io/sb/RemoteList.lua")()
-function isGoldified() return tostring(game:GetService("Players").LocalPlayer.Character:WaitForChild("Head").BrickColor) == "New Yeller" end
+function isGoldified() return tostring(char():WaitForChild("Head").BrickColor) == "New Yeller" end
+function isInArena() return (char().isInArena.Value or char().isInDefaultArena.Value or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value) end
+function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
     fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or glove)):FindFirstChildWhichIsA("ClickDetector"))
@@ -45,17 +47,14 @@ end)
 
 function useGloveAbility(gloveName, waitTime)
     local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
-	if not anteriorGlove==gloveName then return end
     waitTime = waitTime or 0
     equipGlove(gloveName)
     if waitTime>0 then task.wait(waitTime) end
 	local b = game:GetService("ReplicatedStorage"):FindFirstChild(GloveList[gloveName][1])
 	if not b then
 		table.foreach(game:GetService("ReplicatedStorage"):GetChildren(), function(_, remote)
-			if remote:IsA("RemoteEvent") then
-				if remote.Name:lower() == GloveList[gloveName][1]:lower() then
-					b = remote
-				end
+			if remote:IsA("RemoteEvent") and remote.Name:lower() == GloveList[gloveName][1]:lower() then
+				b = remote
 			end
 		end)
 	end
@@ -93,18 +92,10 @@ local Plugin={
 			["Aliases"]={},
 			["Function"]=function(args, speaker)
 				table.foreach(Bindings, function(i, bind)
-					if bind[1]==getstring(1) then
+					if bind[1]==getstring(1) or bind[2]==getstring(1) then
 						table.remove(Bindings, i)
 					end
 				end)
-			end
-		},
-		["sb/setBindingDelay"]={
-			["ListName"]="sb/setBindingDelay [delay]",
-			["Description"]="Sets the delay between bindings",
-			["Aliases"]={},
-			["Function"]=function(args, speaker)
-				bindDelay = tonumber(args[1]) or 0
 			end
 		},
 		["sb/jupiter"]={
@@ -112,7 +103,7 @@ local Plugin={
 			["Description"]="Uses Jupiter's ability, cooldown is 0 seconds",
 			["Aliases"]={},
 			["Function"]=function(args, speaker)
-				workspace.Gravity = (workspace.Gravity==500 and 196.1999969482422) or 500;
+				workspace.Gravity = (workspace.Gravity==500 and 196) or 500;
 			end
 		},
 		["sb/moon"]={
@@ -120,7 +111,7 @@ local Plugin={
 			["Description"]="Uses Moon's ability, cooldown is 0 seconds",
 			["Aliases"]={},
 			["Function"]=function(args, speaker)
-				workspace.Gravity = (workspace.Gravity==50 and 196.1999969482422) or 50;
+				workspace.Gravity = (workspace.Gravity==50 and 196) or 50;
 			end
 		},
 		["sb/spring"]={
@@ -138,7 +129,7 @@ local Plugin={
 			["Aliases"]={},
 			["Function"]=function(args, speaker)
 				local barriers={game:GetService("Workspace"):FindFirstChild("DEATHBARRIER"), game:GetService("Workspace"):FindFirstChild("DEATHBARRIER2")}
-				if not barriers[1] or not barriers[2] then
+				if not barriers[1] then
 					game:GetService("CoreGui"):WaitForChild("DEATHBARRIER").Parent = workspace
 					game:GetService("CoreGui"):WaitForChild("DEATHBARRIER2").Parent = workspace; return
 				end
@@ -152,9 +143,10 @@ local Plugin={
 			["Description"]="Gets you the brazil badge",
 			["Aliases"]={},
 			["Function"]=function(args, speaker)
-				firetouchinterest(game:GetService("Workspace").Lobby.brazil.portal, game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, 0)
+				local a={game:GetService("Workspace").Lobby.brazil.portal, char().HumanoidRootPart}
+				firetouchinterest(unpack(a), 0)
 				task.wait(.2)
-				firetouchinterest(game:GetService("Workspace").Lobby.brazil.portal, game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, 1)
+				firetouchinterest(unpack(a), 1)
 			end
 		},
 		["sb/ghost"]={
@@ -164,7 +156,7 @@ local Plugin={
 			["Function"]=function(args, speaker)
 				local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
 				equipGlove("Ghost")
-				if (game:GetService("Players").LocalPlayer.Character:WaitForChild("Torso").Transparency==1) then
+				if (char():WaitForChild("Torso").Transparency==1) then
 					game:GetService("ReplicatedStorage").Ghostinvisibilitydeactivated:FireServer()
 				else game:GetService("ReplicatedStorage").Ghostinvisibilityactivated:FireServer() end
 				equipGlove(anteriorGlove)
@@ -176,16 +168,18 @@ local Plugin={
 			["Aliases"]={},
 			["Function"]=function(args, speaker)
 				saf=not saf
-				if saf then
-					safc=workspace.Arena.island5.Slapples.DescendantAdded:Connect(function(_,v)
+				while saf do
+					repeat task.wait() until isInArena() == true
+					for _, v in pairs(game:GetService("Workspace").Arena.island5.Slapples:GetDescendants()) do
 						if v:IsA("TouchTransmitter") then
-							local char=game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
-							firetouchinterest(char.Head, v.Parent, 0)
+							local a={game.Players.LocalPlayer.Character.Head, v.Parent}
+							firetouchinterest(unpack(a), 0)
 							task.wait()
-							firetouchinterest(char.Head, v.Parent, 1)
+							firetouchinterest(unpack(a), v.Parent, 1)
 						end
-					end)
-				else safc:Disconnect() end
+					end
+					task.wait(1)
+				end
 			end
 		},
     }
@@ -199,17 +193,14 @@ table.foreach(GloveList, function(glove, data)
         Connection=nil
 	}
     Plugin.Commands["sb/"..data[3]]={
-        ["ListName"] = "sb/"..data[3],
+        ["ListName"] = (glove=="jet" and "sb/"..data[3].." [plr]") or "sb/"..data[3],
         ["Description"] = ("Uses %s's ability, cooldown is %s seconds"):format(glove, tostring(data[2])),
         ["Aliases"]={},
         ["Function"] = function(args, speaker)
             table.insert(Cooldown[glove].Queue, function(args, speaker)
-                if data[4] then
-					data[4](args, speaker) 
-				else useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .2) or 0) end
+				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0))
             end)
-			local char = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
-            if not Cooldown[glove].ExecutingQueue and (char:WaitForChild("TSVulnerability").Value == false or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
+            if not Cooldown[glove].ExecutingQueue and (not isInArena() or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
                 Cooldown[glove].ExecutingQueue = true
                 repeat 
                     Cooldown[glove].Queue[1](args, speaker);
