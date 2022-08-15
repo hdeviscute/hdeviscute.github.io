@@ -38,5 +38,5 @@ return {
             if plr[i+1] then task.wait(5) end
         end)
     end},
-    Duelist={"DuelistAbility", 25, "duelist"}
+    Duelist={"DuelistAbility", 10, "duelist"}
 }
