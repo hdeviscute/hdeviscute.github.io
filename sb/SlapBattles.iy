@@ -164,6 +164,8 @@ local Plugin={
 			["Description"]="Slapple autofarm, toggable",
 			["Aliases"]={},
 			["Function"]=function(args, speaker)
+				-- Thanks to ckzmo5554 for this part, i dont know why but using :GetPropertyChangedSignal doesnt seem to work properly
+				-- I might make this better soon
 				saf=not saf
 				while saf do
 					for _, v in pairs(game:GetService("Workspace").Arena.island5.Slapples:GetDescendants()) do
