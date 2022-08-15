@@ -11,7 +11,7 @@ function isInArena() return (char().isInArena.Value==true or char().IsInDefaultA
 function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
-    fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or (glove=="The Flex" and "Flex") or glove)):FindFirstChildWhichIsA("ClickDetector"))
+    fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="God's Hand" and "Gods") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or (glove=="The Flex" and "Flex") or glove)):FindFirstChildWhichIsA("ClickDetector"))
 end
 
 function bindHit(self, ...)
@@ -37,7 +37,7 @@ end
 local old
 old = hookmetamethod(game, "__namecall", function(self, ...)
 	if getnamecallmethod():lower() == "fireserver" then
-        if (findInTable(RemoteList, self.Name)) then
+        if (findInTable(RemoteList, self.Name)) and not isInArena() then
             bindHit(self, ...)
         end
 	end
@@ -197,7 +197,7 @@ table.foreach(GloveList, function(glove, data)
         ["Aliases"]={},
         ["Function"] = function(args, speaker)
 			table.insert(Cooldown[glove].Queue, function(args, speaker)
-				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or (glove=="Bubble" and .2) or 0))
+				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0))
 			end)
 			if not Cooldown[glove].ExecutingQueue and (not isInArena() or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
 				Cooldown[glove].ExecutingQueue = true
