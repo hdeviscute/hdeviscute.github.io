@@ -22,7 +22,7 @@ return {
     end},
     Cheeky={"Spherify", 0, "cheeky"},
     Replica={"Duplicate", 10, "clone"},
-    bob={"bob", 5, "bob"},
+    bob={"bob", 5.5, "bob"},
     Defense={"Barrier", 30, "barrier"},
     Reverse={"ReverseAbility", 5, "reverse"},
     Jet={"AirStrike", 5, "airstrike", function(args, speaker)
@@ -38,5 +38,6 @@ return {
             if plr[i+1] then task.wait(5) end
         end)
     end},
-    Duelist={"DuelistAbility", 10, "duelist"}
+    Duelist={"DuelistAbility", 25, "duelist"},
+    woah={"VineThud", 5, "shockwave"}
 }
