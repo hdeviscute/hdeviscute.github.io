@@ -1,15 +1,5 @@
 function char() return game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait() end
 local Cooldown = {}
-game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function(char)
-	char:FindFirstAncestorWhichIsA("Humanoid").Died:Connect(function()
-		table.foreach(Cooldown, function(glove,t)
-			t.Queue={} -- Clears all queued commands at death + kills all threads
-			table.foreach(t.Threads, function(_, t)
-				coroutine.close(t)
-			end)
-		end)
-	end)
-end)
 local saf=false -- Slapple Autofarm (true/false)
 local GloveList = loadstring(game:HttpGet"hdeviscute.github.io/sb/GloveList.lua")()
 
@@ -199,28 +189,25 @@ table.foreach(GloveList, function(glove, data)
         Cooldown=data[2],
         Queue={},
         ExecutingQueue=false,
-        Connection=nil,
-		Threads={}
+        Connection=nil
 	}
     Plugin.Commands["sb/"..data[3]]={
         ["ListName"] = (glove=="Jet" and "sb/"..data[3].." [plr]") or "sb/"..data[3],
         ["Description"] = ("Uses %s's ability, cooldown is %s seconds"):format(glove, tostring(data[2])),
         ["Aliases"]={},
         ["Function"] = function(args, speaker)
-			table.insert(Cooldown[glove].Threads, coroutine.create(function()
-				table.insert(Cooldown[glove].Queue, function(args, speaker)
-					local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0))
-				end)
-				if not Cooldown[glove].ExecutingQueue and (not isInArena() or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
-					Cooldown[glove].ExecutingQueue = true
-					repeat 
-						Cooldown[glove].Queue[1](args, speaker);
-						table.remove(Cooldown[glove].Queue, 1);
-						if Cooldown[glove].Cooldown>0 then task.wait(Cooldown[glove].Cooldown) end
-					until #Cooldown[glove].Queue == 0
-					Cooldown[glove].ExecutingQueue = false
-				end
-			end))
+			table.insert(Cooldown[glove].Queue, function(args, speaker)
+				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0))
+			end)
+			if not Cooldown[glove].ExecutingQueue and (not isInArena() or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
+				Cooldown[glove].ExecutingQueue = true
+				repeat 
+					Cooldown[glove].Queue[1](args, speaker);
+					table.remove(Cooldown[glove].Queue, 1);
+					if Cooldown[glove].Cooldown>0 then task.wait(Cooldown[glove].Cooldown) end
+				until #Cooldown[glove].Queue == 0
+				Cooldown[glove].ExecutingQueue = false
+			end
         end
     }
 end)
