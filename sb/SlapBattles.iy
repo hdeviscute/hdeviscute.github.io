@@ -18,7 +18,9 @@ function isInArena() return (char().isInArena.Value==true or char().IsInDefaultA
 function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
-    fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="God's Hand" and "Gods") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or (glove=="The Flex" and "Flex") or glove)):FindFirstChildWhichIsA("ClickDetector"))
+    if not isInArena() then
+		fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="God's Hand" and "Gods") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or (glove=="The Flex" and "Flex") or glove)):FindFirstChildWhichIsA("ClickDetector"))
+    end
 end
 
 function bindHit(self, ...)
@@ -195,15 +197,19 @@ local Plugin={
 			["Function"]=function(args, speaker)
 				local plr=getPlayer(args[1], speaker)
 				table.foreach(plr, function(_, v)
-					local player=game:GetService("Players"):FindFirstChild(v)
+					print(v)
+					print("1")
 					equipGlove(getstring(2))
 					task.wait(.2)
-					firetouchinterest(char().Head, game:GetService("Workspace").Lobby.Teleport1, 0)
+					print("2")
+					firetouchinterest(game.Players.LocalPlayer.Character.Head, game:GetService("Workspace").Lobby.Teleport1, 0)
 					task.wait()
-					firetouchinterest(char().Head, game:GetService("Workspace").Lobby.Teleport1, 1)
+					firetouchinterest(game.Players.LocalPlayer.Character.Head, game:GetService("Workspace").Lobby.Teleport1, 1)
 					task.wait(.1)
+					print("3")
 					execCmd("goto ".. v,speaker)
 					task.wait(.1)
+					print("4")
 					execCmd("givetool "..v,speaker)
 				end)
 			end
