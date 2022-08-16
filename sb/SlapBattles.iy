@@ -23,14 +23,14 @@ end
 
 function bindHit(self, ...)
 	local args = {...}
-	table.foreach(Bindings, function(_, bind)
+	return table.foreach(Bindings, function(_, bind)
 		if RemoteList[bind[1]] == self.Name then
 			equipGlove(bind[2])
 			game:GetService("ReplicatedStorage"):WaitForChild(RemoteList[bind[2]]):FireServer(unpack(args))
 			equipGlove(bind[1])	
+			return true
 		end
 	end)
-	return nil
 end
 
 function findInTable(t,v)
@@ -44,7 +44,7 @@ local old
 old = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
 	if getnamecallmethod():lower() == "fireserver" then
         if (findInTable(RemoteList, self.Name)) then
-            return bindHit(self, ...)
+            if bindHit(self, ...) then return end
         end
 	end
 	return old(self, ...)
