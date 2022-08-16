@@ -52,7 +52,7 @@ end))
 
 
 function useGloveAbility(gloveName, waitTime)
-	if isInArena() then return end
+	if isInArena() and not game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==gloveName then return end
     local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
     waitTime = waitTime or 0
     equipGlove(gloveName)
