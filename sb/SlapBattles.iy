@@ -1,3 +1,10 @@
+if not game.PlaceId == 6403373529 then
+	return {
+		["PluginName"] = "Slap Battles",
+		["PluginDescription"] = "hdev is cute",
+		["Commands"] = {}
+	}
+end
 function char() return game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait() end
 local Cooldown = {}
 local saf=false -- Slapple Autofarm (true/false)
@@ -37,7 +44,7 @@ end
 local old
 old = hookmetamethod(game, "__namecall", function(self, ...)
 	if getnamecallmethod():lower() == "fireserver" then
-        if (findInTable(RemoteList, self.Name)) then
+        if (findInTable(RemoteList, self.Name)) and not isInArena() then
             bindHit(self, ...)
         end
 	end
@@ -181,6 +188,34 @@ local Plugin={
 				end
 			end
 		},
+		["sb/giveglove"]={
+			["ListName"]="sb/giveglove [plr] [glove]",
+			["Description"]="Gives the glove to the player",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local plr=getPlayer(args[1], speaker)
+				table.foreach(plr, function(_, v)
+					local player=game:GetService("Players"):FindFirstChild(v)
+					equipGlove(getstring(2))
+					task.wait(.2)
+					firetouchinterest(char().Head, game:GetService("Workspace").Lobby.Teleport1, 0)
+					task.wait()
+					firetouchinterest(char().Head, game:GetService("Workspace").Lobby.Teleport1, 1)
+					task.wait(.1)
+					execCmd("goto ".. v,speaker)
+					task.wait(.1)
+					execCmd("givetool "..v,speaker)
+				end)
+			end
+		},
+		["sb/gotoarena"]={
+			["ListName"]="sb/gotoarena",
+			["Description"]="Teleports you to arena",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				char().HumanoidRootPart.CFrame = CFrame.new(0,0,0)
+			end
+		}
     }
 }
 
