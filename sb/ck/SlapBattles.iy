@@ -1,123 +1,17 @@
+if not game.PlaceId == 6403373529 then
+	return {
+		["PluginName"] = "Slap Battles",
+		["PluginDescription"] = "hdev is cute",
+		["Commands"] = {}
+	}
+end
 function char() return game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait() end
 local Cooldown = {}
 local saf=false -- Slapple Autofarm (true/false)
-local GloveList = {
-    Default={"Fart", 0, "fart"},
-    Diamond={"Rockmode", 0, "rock"},
-    ZZZZZZZ={"ZZZZZZZSleep", 0, "sleep"},
-    Extended={"Fart", 0, "fart"},
-    Brick={"lbrick", 3.5, "brick"},
-    Flash={"Flashteleport", 3.5, "flash"},
-    Swapper={"SLOC", 7.5, "swap"},
-    Phase={"PhaseA", 5.2, "phase"},
-    ["Za Hando"]={"Erase", 7.5, "pull"},
-    Fort={"Fortlol", 5, "fort"},
-    Pusher={"PusherWall", 10, "push"},
-    Anchor={"AnchorActivated", 5, "anchor"},
-    Mail={"Mailsend", 10, "mail"},
-    Golden={"Goldify", 0, "goldify", function(args, speaker)
-        local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
-        equipGlove("Golden")
-        game:GetService("ReplicatedStorage"):FindFirstChild("Goldify"):FireServer(true);
-        equipGlove(anteriorGlove)
-    end},
-    Cheeky={"Spherify", 0, "cheeky"},
-    Replica={"Duplicate", 10, "clone"},
-    bob={"bob", 5.5, "bob"},
-    Defense={"Barrier", 30, "barrier"},
-    Reverse={"ReverseAbility", 5, "reverse"},
-    Jet={"AirStrike", 5, "airstrike", function(args, speaker)
-        local plr = getPlayer(getstring(1), speaker)
-        table.foreach(plr, function(i, player)
-            player=game:GetService("Players"):WaitForChild(player)
-            if isPlayerInArena(player) then
-                local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
-                equipGlove("Jet")
-                game:GetService("ReplicatedStorage"):FindFirstChild("AirStrike"):FireServer(player.Character);
-                equipGlove(anteriorGlove) 
-            end
-            if plr[i+1] then task.wait(5) end
-        end)
-    end},
-    Duelist={"DuelistAbility", 25, "duelist"},
-    woah={"VineThud", 5, "shockwave"},
-    Bubble={"BubbleThrow", 3, "bubble"},
-    bus={"busmoment", 5, "bus"},
-    ["[REDACTED]"]={"Well", 10, "redacted"},
-    Engineer={"Sentry", 10, "sentry"}
-}
-
+local GloveList = loadstring(game:HttpGet"https://raw.githubusercontent.com/hdeviscute/hdeviscute.github.io/main/sb/GloveList.lua")()
 
 local Bindings = {}
-local RemoteList = {
-    Default="b",
-    Diamond="DiamondHit",
-    ZZZZZZZ="ZZZZZZZHit",
-    Extended="b",
-    Brick="BrickHit",
-    Snow="SnowHit",
-    Pull="PullHit",
-    Flash="FlashHit",
-    Spring="springhit",
-    Swapper="HitSwapper",
-    Bull="BullHit",
-    Dice="DiceHit",
-    Ghost="GhostHit",
-    Thanos="ThanosHit",
-    Stun="HtStun",
-    ["Za Hando"]="zhramt",
-    Fort="Fort",
-    Magnet="MagnetHIT",
-    Pusher="PusherHit",
-    Anchor="hitAnchor",
-    Space="HtSpace",
-    Boomerang="BoomerangH",
-    Dream="Dreamhit",
-    Golden="GoldenHit",
-    Cheeky="CheekyHit",
-    Mail="MailHit",
-    Reaper="ReaperHit",
-    Replica="ReplicaHit",
-    Defense="DefenseHit",
-    Killstreak="KSHit",
-    Reverse="ReverseHit",
-    Shukuchi="ShukuchiHit",
-    Duelist="DuelistHit",
-    woah="woahHit",
-    Ice="IceHit",
-    Adios="hitAdios",
-    Blocked="BlockedHit",
-    Engineer="engiehit",
-    Rocky="RockyHit",
-    Conveyor="ConvHit",
-    Phantom="PhantomHit",
-    Wormhole="WormHit",
-    STOP="STOP",
-    ["God's Hand"]="Godshand",
-    Plague="PlagueHit",
-    ["[REDACTED]"]="ReHit",
-    bus="hitbus",
-    Phase="PhaseH",
-    Warp="WarpHt",
-    Bomb="BombHit",
-    Bubble="BubbleHit",
-    Jet="JetHit",
-    potato="potatohit",
-    CULT="CULTHit",
-    buddies="buddiesHIT",
-    Moon="CelestialHit",
-    Jupiter="CelestialHit",
-    Spy="SpyHit",
-    Rage="GRRRR",
-    Orbit="Orbihit",
-    Error="Errorhit",
-    bob="bobhit",
-    Trap="traphi",
-    spin="spinhit",
-    ["The Flex"]="FlexHit",
-    Flex="FlexHit",
-    Overkill="Overkillhit"
-}
+local RemoteList = loadstring(game:HttpGet"https://raw.githubusercontent.com/hdeviscute/hdeviscute.github.io/main/sb/RemoteList.lua")()
 
 function isGoldified() return tostring(char():WaitForChild("Head").BrickColor) == "New Yeller" end
 function isInArena() return (char().isInArena.Value==true or char().IsInDefaultArena.Value==true or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value==true) end
@@ -150,7 +44,7 @@ end
 local old
 old = hookmetamethod(game, "__namecall", function(self, ...)
 	if getnamecallmethod():lower() == "fireserver" then
-        if (findInTable(RemoteList, self.Name)) then
+        if (findInTable(RemoteList, self.Name)) and not isInArena() then
             bindHit(self, ...)
         end
 	end
@@ -294,6 +188,34 @@ local Plugin={
 				end
 			end
 		},
+		["sb/giveglove"]={
+			["ListName"]="sb/giveglove [plr] [glove]",
+			["Description"]="Gives the glove to the player",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				local plr=getPlayer(args[1], speaker)
+				table.foreach(plr, function(_, v)
+					local player=game:GetService("Players"):FindFirstChild(v)
+					equipGlove(getstring(2))
+					task.wait(.2)
+					firetouchinterest(char().Head, game:GetService("Workspace").Lobby.Teleport1, 0)
+					task.wait()
+					firetouchinterest(char().Head, game:GetService("Workspace").Lobby.Teleport1, 1)
+					task.wait(.1)
+					execCmd("goto ".. v,speaker)
+					task.wait(.1)
+					execCmd("givetool "..v,speaker)
+				end)
+			end
+		},
+		["sb/gotoarena"]={
+			["ListName"]="sb/gotoarena",
+			["Description"]="Teleports you to arena",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				char().HumanoidRootPart.CFrame = CFrame.new(0,0,0)
+			end
+		}
     }
 }
 
