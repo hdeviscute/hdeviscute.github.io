@@ -188,20 +188,6 @@ local Plugin={
 				end
 			end
 		},
-		["sb/giveglove"]={
-			["ListName"]="sb/giveglove [plr] [glove]",
-			["Description"]="Gives the glove to the player",
-			["Aliases"]={},
-			["Function"]=function(args, speaker)
-				local plr=getPlayer(args[1], speaker)
-				table.foreach(plr, function(_, v)
-					equipGlove(args[2])
-					firetouchinterest(game.Players.LocalPlayer.Character.Head, game:GetService("Workspace").Lobby.Teleport1, 0)
-					firetouchinterest(game.Players.LocalPlayer.Character.Head, game:GetService("Workspace").Lobby.Teleport1, 1)
-					execCmd("goto ".. v .. "\1^.2^givetool "..v, speaker)
-				end)
-			end
-		},
 		["sb/gotoarena"]={
 			["ListName"]="sb/gotoarena",
 			["Description"]="Teleports you to arena",
