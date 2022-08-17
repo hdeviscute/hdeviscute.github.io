@@ -65,5 +65,5 @@ return {
     spin="spinhit",
     ["The Flex"]="FlexHit",
     Flex="FlexHit",
-    Overkill="Overkillhit"
+    OVERKILL="Overkillhit"
 }
