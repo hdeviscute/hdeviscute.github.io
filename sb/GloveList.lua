@@ -39,7 +39,7 @@ return {
         end)
     end},
     Duelist={"DuelistAbility", 25, "duelist"},
-    woah={"VineThud", 5, "shockwave"},
+    woah={"VineThud", 10, "shockwave"},
     Bubble={"BubbleThrow", 3, "bubble"},
     bus={"busmoment", 5, "bus"},
     ["[REDACTED]"]={"Well", 10, "redacted"},
