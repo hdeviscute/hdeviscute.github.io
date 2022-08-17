@@ -43,5 +43,6 @@ return {
     Bubble={"BubbleThrow", 3, "bubble"},
     bus={"busmoment", 5, "bus"},
     ["[REDACTED]"]={"Well", 10, "redacted"},
-    Engineer={"Sentry", 10, "sentry"}
+    Engineer={"Sentry", 10, "sentry"},
+    Rocky={"RockyShoot", 7, "rocky"}
 }
