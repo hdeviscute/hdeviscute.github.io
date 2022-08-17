@@ -14,23 +14,11 @@ local Bindings = {}
 local RemoteList = loadstring(game:HttpGet"hdeviscute.github.io/sb/RemoteList.lua")()
 
 function isGoldified() return tostring(char():WaitForChild("Head").BrickColor) == "New Yeller" end
-function isInArena() return (char().isInArena.Value==true or char().IsInDefaultArena.Value==true or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value==true) end
+function isInArena() return (not char():FindFirstChild("entered")==nil or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value==true) end
 function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
 	fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="God's Hand" and "Gods") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or (glove=="The Flex" and "Flex") or glove)):FindFirstChildWhichIsA("ClickDetector"))
-end
-
-function bindHit(self, ...)
-	local args = {...}
-	return table.foreach(Bindings, function(_, bind)
-		if RemoteList[bind[1]] == self.Name then
-			equipGlove(bind[2])
-			game:GetService("ReplicatedStorage"):WaitForChild(RemoteList[bind[2]]):FireServer(unpack(args))
-			equipGlove(bind[1])	
-			return true
-		end
-	end)
 end
 
 function findInTable(t,v)
@@ -42,9 +30,17 @@ end
 
 local old
 old = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+	local args={...}
 	if getnamecallmethod():lower() == "fireserver" then
-        if (findInTable(RemoteList, self.Name)) then
-            if bindHit(self, ...) then return end
+        if (findInTable(RemoteList, self.Name)) and not (isInArena()) then
+            table.foreach(Bindings, function(_, bind)
+				if RemoteList[bind[1]] == self.Name then
+					equipGlove(bind[2])
+					game:GetService("ReplicatedStorage"):WaitForChild(RemoteList[bind[2]]):FireServer(unpack(args))
+					equipGlove(bind[1])	
+					return nil
+				end
+			end)
         end
 	end
 	return old(self, ...)
@@ -240,6 +236,24 @@ local Plugin={
 					RS:Wait()
 				end
 				refresh(speaker)
+			end
+		},
+		["sb/forceAbility"]={
+			["ListName"]="sb/forceAbility [ability]",
+			["Description"]="This will forcefully activate an ability, no matter the cooldown, if you're at arena or anything else",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				if GloveList[getstring(1)] then
+					if GloveList[getstring(1)][4] then
+						GloveList[getstring(1)][4]({}, speaker)
+					else 
+						local g=getstring(1)
+						local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+						equipGlove(g)
+						game:GetService("ReplicatedStorage"):FindFirstChild(GloveList[g][1]):FireServer();
+						equipGlove(anteriorGlove)
+					end
+				else notify("Error", "Glove is not supported/was not found") end
 			end
 		}
     }
