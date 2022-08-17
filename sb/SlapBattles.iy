@@ -32,7 +32,7 @@ local old
 old = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
 	local args={...}
 	if getnamecallmethod():lower() == "fireserver" then
-        if (findInTable(RemoteList, self.Name)) and not (isInArena()) then
+        if (findInTable(RemoteList, self.Name)) then
             table.foreach(Bindings, function(_, bind)
 				if RemoteList[bind[1]] == self.Name then
 					equipGlove(bind[2])
