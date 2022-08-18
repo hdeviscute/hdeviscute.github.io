@@ -14,7 +14,12 @@ local Bindings = {}
 local RemoteList = loadstring(game:HttpGet"https://raw.githubusercontent.com/hdeviscute/hdeviscute.github.io/main/sb/RemoteList.lua")()
 
 function isGoldified() return tostring(char():WaitForChild("Head").BrickColor) == "New Yeller" end
-function isInArena() return (not char():FindFirstChild("entered")==nil or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value==true) end
+function isInArena() 
+	if char():FindFirstChild("entered") or game:GetService("Players").LocalPlayer.isParticipatingplayerBool.Value==true then
+		return true
+	end
+	return false
+end
 function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
@@ -208,27 +213,26 @@ local Plugin={
 				char().HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
 				wait(.1)
 				workspace.CurrentCamera.CameraSubject = v
-				local Char = char()
-				local hum = Char and Char:FindFirstChildWhichIsA('Humanoid')
-				local hrp = hum and hum.RootPart
+				local hum = char():FindFirstChildWhichIsA('Humanoid')
+				local hrp = hum.RootPart
 				local hrppos = hrp.CFrame
 				hum = hum:Destroy() or hum:Clone()
-				hum.Parent = Char
+				hum.Parent = char()
 				hum:ClearAllChildren()
 				speaker:ClearCharacterAppearance()
 				coroutine.wrap(function()
 					speaker.CharacterAdded:Wait():WaitForChild('Humanoid').RootPart.CFrame = wait() and hrppos
 				end)()
 				local vHRP = getRoot(v)
-				while Char and Char.Parent and vHRP and vHRP.Parent do
+				while char() and char().Parent and vHRP and vHRP.Parent do
 					local Tools = false
-					for _, v in ipairs(Char:GetChildren()) do
-						if v:IsA('BackpackItem') and v:FindFirstChild('Handle') then
+					table.foreach(char:GetChildren(), function(_, tool)
+						if tool:IsA('Tool') and tool:FindFirstChild('Handle') then
 							Tools = true
 							firetouchinterest(v.Handle, vHRP, 0)
 							firetouchinterest(v.Handle, vHRP, 1)
 						end
-					end
+					end)
 					if not Tools then
 						break
 					end
