@@ -44,5 +44,15 @@ return {
     bus={"busmoment", 5, "bus"},
     ["[REDACTED]"]={"Well", 10, "redacted"},
     Engineer={"Sentry", 10, "sentry"},
-    Rocky={"RockyShoot", 7, "rocky"}
+    Rocky={"RockyShoot", 7, "rocky"},
+    ["God's Hand"]={"Timestop", 60, "timestop", function(args, speaker)
+        local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+        equipGlove("God's Hand")
+        game:GetService("ReplicatedStorage"):FindFirstChild("TimestopJump"):FireServer();
+        game:GetService("ReplicatedStorage"):FindFirstChild("Timestopchoir"):FireServer();
+        wait(.2)
+        game:GetService("ReplicatedStorage"):FindFirstChild("Timestop"):FireServer();
+        wait(10)
+        equipGlove(anteriorGlove) 
+    end}
 }
