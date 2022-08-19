@@ -69,7 +69,7 @@ return {
     STOP={"STOP", 5, "stop", function(args, speaker)
         local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
         equipGlove("STOP")
-        game:GetService("ReplicatedStorage"):FindFirstChild("STOP"):FireServer();
+        game:GetService("ReplicatedStorage"):FindFirstChild("STOP"):FireServer(true);
         equipGlove(anteriorGlove) 
     end}
 }
