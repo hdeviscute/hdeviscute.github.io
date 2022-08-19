@@ -259,6 +259,20 @@ local Plugin={
 					end
 				else notify("Error", "Glove is not supported/was not found") end
 			end
+		},
+		["sb/clearqueue"]={
+			["ListName"]="sb/clearqueue [glove/all]",
+			["Description"]="Clears the queue for abilities",
+			["Aliases"]={},
+			["Function"]=function(args, speaker)
+				if Cooldown[getstring(1)] then
+					Cooldown[getstring(1)].Queue={}
+				elseif getstring(1):lower()=="all" then
+					table.foreach(Cooldown, function(_,v)
+						v.Queue={}
+					end)
+				end
+			end
 		}
     }
 }
