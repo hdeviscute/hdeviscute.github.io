@@ -52,7 +52,7 @@ return {
         game:GetService("ReplicatedStorage"):FindFirstChild("Timestopchoir"):FireServer();
         wait(.2)
         game:GetService("ReplicatedStorage"):FindFirstChild("Timestop"):FireServer();
-        wait(10)
+        wait(15)
         equipGlove(anteriorGlove) 
     end},
     Slapple={"funnyTree", 3.5, "tree", function(args, speaker)
@@ -65,5 +65,11 @@ return {
                 game:GetService("ReplicatedStorage").funnyTree:FireServer(plr.Character.HumanoidRootPart.Position)
             end
         end
+    end},
+    STOP={"STOP", 5, "stop", function(args, speaker)
+        local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
+        equipGlove("STOP")
+        game:GetService("ReplicatedStorage"):FindFirstChild("STOP"):FireServer();
+        equipGlove(anteriorGlove) 
     end}
 }
