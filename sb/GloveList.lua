@@ -54,5 +54,16 @@ return {
         game:GetService("ReplicatedStorage"):FindFirstChild("Timestop"):FireServer();
         wait(10)
         equipGlove(anteriorGlove) 
+    end},
+    Slapple={"funnyTree", 3.5, "tree", function(args, speaker)
+        if not args[1] then
+            game:GetService("ReplicatedStorage").funnyTree:FireServer(char().HumanoidRootPart.Position)
+        else
+            local plr = getPlayer(args[1], speaker)
+            if plr[1] then
+                plr=game:GetService("Players"):FindFirstChild(plr[1])
+                game:GetService("ReplicatedStorage").funnyTree:FireServer(plr.Character.HumanoidRootPart.Position)
+            end
+        end
     end}
 }
