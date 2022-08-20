@@ -52,7 +52,6 @@ return {
         game:GetService("ReplicatedStorage"):FindFirstChild("Timestopchoir"):FireServer();
         wait(.2)
         game:GetService("ReplicatedStorage"):FindFirstChild("Timestop"):FireServer();
-        wait(15)
         equipGlove(anteriorGlove) 
     end},
     Slapple={"funnyTree", 3.5, "tree", function(args, speaker)
