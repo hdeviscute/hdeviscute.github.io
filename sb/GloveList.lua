@@ -70,5 +70,6 @@ return {
         equipGlove("STOP")
         game:GetService("ReplicatedStorage"):FindFirstChild("STOP"):FireServer(true);
         equipGlove(anteriorGlove) 
-    end}
+    end},
+    CUSTOM={"CustomMode", 0, "customRock"}
 }
