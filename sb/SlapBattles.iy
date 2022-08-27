@@ -213,7 +213,7 @@ local Plugin={
 				firetouchinterest(game.Players.LocalPlayer.Character.Head, game:GetService("Workspace").Lobby.Teleport1, 1)
 				wait(.2)
 				local v = game:GetService("Players")[getPlayer(args[1], speaker)[1]].Character
-				char().HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
+				char():FindFirstChildWhichIsA('Humanoid').RootPart.CFrame = v:FindFirstChildWhichIsA('Humanoid').RootPart.CFrame
 				wait(.1)
 				workspace.CurrentCamera.CameraSubject = v
 				local hum = char():FindFirstChildWhichIsA('Humanoid')
