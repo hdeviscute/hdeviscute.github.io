@@ -1,14 +1,11 @@
-if not game.PlaceId == 6403373529 then
-	return {
-		["PluginName"] = "Slap Battles",
-		["PluginDescription"] = "hdev is cute",
-		["Commands"] = {}
-	}
-end
 function char() return game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait() end
 local Cooldown = {}
 local saf=false
 local GloveList = loadstring(game:HttpGet"https://raw.githubusercontent.com/hdeviscute/hdeviscute.github.io/main/sb/GloveList.lua")()
+local loopRemoveNametag=false
+local loopNoTimestop=false
+local megarockImmunity=false
+local megarockImmunityConnection
 
 local Bindings = {}
 local RemoteList = loadstring(game:HttpGet"https://raw.githubusercontent.com/hdeviscute/hdeviscute.github.io/main/sb/RemoteList.lua")()
@@ -23,7 +20,13 @@ end
 function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
+	game:GetService("Workspace").Sounds.Select.Volume=0 -- Mutes the equipping sound, since my ears are starting to hurt
+	game:GetService("Workspace").Sounds.Fail.Volume=0
+	task.wait()
 	fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="God's Hand" and "Gods") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or (glove=="The Flex" and "Flex") or glove)):FindFirstChildWhichIsA("ClickDetector"))
+	task.wait()
+	game:GetService("Workspace").Sounds.Select.Volume=3
+	game:GetService("Workspace").Sounds.Fail.Volume=3
 end
 
 function findInTable(t,v)
@@ -210,7 +213,7 @@ local Plugin={
 				firetouchinterest(game.Players.LocalPlayer.Character.Head, game:GetService("Workspace").Lobby.Teleport1, 1)
 				wait(.2)
 				local v = game:GetService("Players")[getPlayer(args[1], speaker)[1]].Character
-				char().HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
+				char():FindFirstChildWhichIsA('Humanoid').RootPart.CFrame = v:FindFirstChildWhichIsA('Humanoid').RootPart.CFrame
 				wait(.1)
 				workspace.CurrentCamera.CameraSubject = v
 				local hum = char():FindFirstChildWhichIsA('Humanoid')
@@ -273,7 +276,67 @@ local Plugin={
 					end)
 				end
 			end
-		}
+		},
+        ["sb/removenametag"]={
+            ["ListName"]="sb/removeNameTag [options:(once!/loop/unloop)]",
+			["Description"]="Removes your nametag",
+			["Aliases"]={"sb/removeNameTag"},
+			["Function"]=function(args, speaker)
+                if not args[1] or getstring(1)=="once" then
+                    char():WaitForChild("Head"):WaitForChild("Nametag"):Destroy()
+                elseif getstring(1)=="loop" then
+                    loopRemoveNametag=true
+                    repeat char():WaitForChild("Head"):WaitForChild("Nametag"):Destroy() until loopRemoveNametag==false
+                elseif getstring(1)=="unloop" then
+                    loopRemoveNametag=false
+                end
+			end
+        },
+        ["sb/notimestop"]={
+            ["ListName"]="sb/notimestop [options:(do!/undo/loop/unloop)]",
+			["Description"]="Makes you invulnerable to timestop",
+			["Aliases"]={"sb/noTimestop"},
+			["Function"]=function(args, speaker)
+                if not args[1] or getstring(1)=="do" then
+                    char():WaitForChild("TSVulnerability").Value=false
+                elseif getstring(1)=="loop" then
+                    loopNoTimestop=true
+                    repeat char():WaitForChild("TSVulnerability").Value=false until loopNoTimestop==false
+                elseif getstring(1)=="undo" then
+                    char():WaitForChild("TSVulnerability").Value=true
+                elseif getstring(1)=="unloop" then
+                    loopNoTimestop=false
+                end
+			end
+        },
+        ["sb/megarockImmunity"]={
+            ["ListName"]="sb/megarockImmunity",
+            ["Description"]="Makes you invulnerable to megarock, toggable",
+            ["Aliases"]={"sb/megarockimmunity"},
+            ["Function"]=function(args, speaker)
+                megarockImmunity=not megarockImmunity
+                if megarockImmunity then
+                    table.foreach(workspace:GetDescendants(), function(_, v)
+                        if v.Name=="rock" and v:IsA("BasePart") then
+                            v:FindFirstChildWhichIsA"TouchTransmitter":Destroy()
+                        end
+                    end)
+                    megarockImmunityConnection= workspace.DescendantAdded:Connect(function(v)
+                        if megarockImmunity and v.Name=="rock" and v:IsA("BasePart") then
+                            v:FindFirstChildWhichIsA"TouchTransmitter":Destroy()
+                        end
+                    end)
+                else megarockImmunityConnection:Disconnect() end
+            end
+        },
+        ["sb/cubeImmunity"]={
+            ["ListName"]="sb/cubeImmunity",
+            ["Description"]="Makes you invulnerable to the cube of death, cannot be reversed",
+            ["Aliases"]={"sb/cubeimmunity"},
+            ["Function"]=function(args, speaker)
+                game:GetService("Workspace").Arena.CubeOfDeathArea["the cube of death(i heard it kills)"]:FindFirstChildWhichIsA"TouchTransmitter":Destroy()
+            end
+        }
     }
 }
 
@@ -290,7 +353,7 @@ table.foreach(GloveList, function(glove, data)
         ["Aliases"]={},
         ["Function"] = function(args, speaker)
 			table.insert(Cooldown[glove].Queue, function(args, speaker)
-				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase") and .2) or (glove=="bob" and .5) or 0))
+				local _=(data[4] and data[4](args, speaker) or useGloveAbility(glove, ((glove=="Phase" or glove=="Bubble") and .2) or (glove=="bob" and .5) or 0))
 			end)
 			if not Cooldown[glove].ExecutingQueue and (not isInArena() or game:GetService("Players").LocalPlayer.leaderstats.Glove.Value==glove) then
 				Cooldown[glove].ExecutingQueue = true
