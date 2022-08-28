@@ -20,13 +20,7 @@ end
 function isPlayerInArena(plr) return (plr.Character.isInArena.Value or plr.isInDefaultArena.Value or plr.isParticipatingplayerBool.Value) end
 
 function equipGlove(glove) 
-	game:GetService("Workspace").Sounds.Select.Volume=0 -- Mutes the equipping sound, since my ears are starting to hurt
-	game:GetService("Workspace").Sounds.Fail.Volume=0
-	task.wait()
 	fireclickdetector(workspace.Lobby:FindFirstChild(((glove=="Diamond" and "DiamondGlove") or (glove=="God's Hand" and "Gods") or (glove=="Default" and "DefaultGlove") or (glove=="Ghost" and "Ghosthand") or (glove=="Za Hando" and "ZaHando") or (glove=="The Flex" and "Flex") or glove)):FindFirstChildWhichIsA("ClickDetector"))
-	task.wait()
-	game:GetService("Workspace").Sounds.Select.Volume=3
-	game:GetService("Workspace").Sounds.Fail.Volume=3
 end
 
 function findInTable(t,v)
