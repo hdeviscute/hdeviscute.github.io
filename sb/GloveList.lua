@@ -45,7 +45,7 @@ return {
     ["[REDACTED]"]={"Well", 10, "redacted"},
     Engineer={"Sentry", 10, "sentry"},
     Rocky={"RockyShoot", 7, "rocky"},
-    ["God's Hand"]={"Timestop", 35, "timestop", function(args, speaker)
+    ["God's Hand"]={"Timestop", 60, "timestop", function(args, speaker)
         local anteriorGlove = game:GetService("Players").LocalPlayer.leaderstats.Glove.Value
         equipGlove("God's Hand")
         game:GetService("ReplicatedStorage"):FindFirstChild("TimestopJump"):FireServer();
