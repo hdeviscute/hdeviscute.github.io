@@ -71,5 +71,6 @@ return {
         game:GetService("ReplicatedStorage"):FindFirstChild("STOP"):FireServer(true);
         equipGlove(anteriorGlove) 
     end},
-    CUSTOM={"CustomMode", 0, "customRock"}
+    CUSTOM={"CustomMode", 0, "customRock"},
+    Rattlebones={"GeneralAbility", 5, "skeleton"}
 }
