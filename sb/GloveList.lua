@@ -72,5 +72,6 @@ return {
         equipGlove(anteriorGlove) 
     end},
     CUSTOM={"CustomMode", 0, "customRock"},
-    Rattlebones={"GeneralAbility", 5, "skeleton"}
+    Rattlebones={"GeneralAbility", 5, "skeleton"},
+    Tableflip={"GeneralAbility", 5, "tableflip"}
 }
