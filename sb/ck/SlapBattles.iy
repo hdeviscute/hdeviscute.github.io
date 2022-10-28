@@ -74,7 +74,8 @@ local GloveList = {
     end},
     CUSTOM={"CustomMode", 0, "customRock"},
     Rattlebones={"GeneralAbility", 5, "skeleton"},
-    Tableflip={"GeneralAbility", 5, "tableflip"}
+    Tableflip={"GeneralAbility", 5, "tableflip"},
+    HallowJack={"Hallow", 1.5, "hallow"}
 }
 local loopRemoveNametag=false
 local loopNoTimestop=false
